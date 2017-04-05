@@ -11,6 +11,7 @@ import AVFoundation
 
 class MainVC: UIViewController,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,UISearchBarDelegate {
 
+    //MARK: variables and outlets
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var collectionView: UICollectionView!
     
@@ -21,6 +22,7 @@ class MainVC: UIViewController,UICollectionViewDelegate,UICollectionViewDataSour
     
     var musicPlayer:AVAudioPlayer!
     
+    //MARK: Lificycle functions
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -35,6 +37,18 @@ class MainVC: UIViewController,UICollectionViewDelegate,UICollectionViewDataSour
         initAudio()
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "detailVC" {
+            if let dest = segue.destination as? DetailVC {
+                if let poke = sender as? Pokemon {
+                    dest.pokemon = poke 
+                }
+            }
+        }
+        
+    }
+    
+    //MARK: Custom functions
     func initAudio() {
         let path = Bundle.main.path(forResource: "music", ofType: "mp3")
         do {
@@ -84,7 +98,13 @@ class MainVC: UIViewController,UICollectionViewDelegate,UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
+        var pokemon:Pokemon!
+        if inSearchMode {
+            pokemon = filteredPokemons[indexPath.row]
+        } else {
+            pokemon = pokemons[indexPath.row]
+        }
+        performSegue(withIdentifier: "detailVC", sender: pokemon)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
